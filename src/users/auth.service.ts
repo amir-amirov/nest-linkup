@@ -46,13 +46,19 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex');
 
     // 3. Create a new user and save it
-    const newUser = this.usersService.create({
+    const newUser = await this.usersService.create({
       ...createUserDto,
       password: result,
     });
 
-    // 4. Return the user
-    return newUser;
+    // 4. Receive tokens
+    const [accessToken, refreshToken] = await this.createTokens(
+      newUser.id,
+      newUser.email,
+    );
+
+    // 5. Return the user with tokens
+    return { ...newUser, accessToken, refreshToken };
   }
   async signin(loginUserDto: loginUserDto) {
     const [user] = await this.usersService.find(loginUserDto.email);
@@ -68,9 +74,37 @@ export class AuthService {
       throw new BadRequestException('bad password');
     }
 
+    // const payload = {
+    //   sub: user.id,
+    //   email: user.email,
+    // };
+    // const token = await this.jwtService.signAsync(payload, {
+    //   secret: this.configService.get<string>('JWT_SECRET'),
+    //   expiresIn: '1d',
+    // });
+    // const refreshToken = await this.jwtService.signAsync(payload, {
+    //   secret: this.configService.get<string>('JWT_SECRET'),
+    //   expiresIn: '7d',
+    // });
+
+    const [accessToken, refreshToken] = await this.createTokens(
+      user.id,
+      user.email,
+    );
+
+    const userWithToken = {
+      ...user,
+      accessToken,
+      refreshToken,
+    };
+
+    return userWithToken;
+  }
+
+  async createTokens(id: number, email: string) {
     const payload = {
-      sub: user.id,
-      email: user.email,
+      sub: id,
+      email: email,
     };
     const token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_SECRET'),
@@ -81,12 +115,6 @@ export class AuthService {
       expiresIn: '7d',
     });
 
-    const userWithToken = {
-      ...user,
-      accessToken: token,
-      refreshToken,
-    };
-
-    return userWithToken;
+    return [token, refreshToken];
   }
 }
