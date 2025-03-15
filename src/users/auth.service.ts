@@ -58,12 +58,12 @@ export class AuthService {
     );
 
     // 5. Return the user with tokens
-    return { ...newUser, accessToken, refreshToken };
+    return { user: newUser, accessToken, refreshToken };
   }
   async signin(loginUserDto: loginUserDto) {
     const [user] = await this.usersService.find(loginUserDto.email);
     if (!user) {
-      throw new NotFoundException('no user with such an email');
+      throw new NotFoundException('No user with such email');
     }
 
     const [salt, storedHash] = user.password.split('.');
@@ -71,7 +71,7 @@ export class AuthService {
     const hash = (await scrypt(loginUserDto.password, salt, 32)) as Buffer;
 
     if (storedHash !== hash.toString('hex')) {
-      throw new BadRequestException('bad password');
+      throw new BadRequestException('Incorrect password');
     }
 
     // const payload = {
