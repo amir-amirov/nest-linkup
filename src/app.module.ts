@@ -6,16 +6,26 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
+import { PostsModule } from './posts/posts.module';
+import { Post } from './posts/post.entity';
+import { LikesModule } from './likes/likes.module';
+import { Like } from './likes/like.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // Makes config available everywhere
     }),
+    // TypeOrmModule.forRoot({
+    //   type: 'sqlite',
+    //   database: 'db.sqlite',
+    //   entities: [User, Post, Like],
+    //   synchronize: true,
+    // }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db.sqlite',
-      entities: [User],
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      entities: [User, Post, Like],
       synchronize: true,
     }),
     UsersModule,
@@ -24,6 +34,8 @@ import { User } from './users/user.entity';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '365d' },
     }),
+    PostsModule,
+    LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
