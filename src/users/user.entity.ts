@@ -1,3 +1,5 @@
+import { Like } from 'src/likes/like.entity';
+import { Post } from 'src/posts/post.entity';
 import {
   AfterInsert,
   AfterRemove,
@@ -7,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -34,6 +37,18 @@ export class User {
 
   @Column({ nullable: true })
   bio?: string;
+
+  @OneToMany(() => Post, (post) => post.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  posts: Post[];
+
+  @OneToMany(() => Like, (like) => like.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  likes: Like[];
 
   @CreateDateColumn()
   created_at: Date; // Auto-generated creation timestamp
