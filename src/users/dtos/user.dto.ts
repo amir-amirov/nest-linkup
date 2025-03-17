@@ -20,6 +20,9 @@ export class UserDto {
       name: obj.name,
       email: obj.email,
       image: obj.image,
+      phoneNumber: obj.phoneNumber,
+      location: obj.location,
+      bio: obj.bio,
     };
   })
   user: { id: number; name: string; email: string; image: string };

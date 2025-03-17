@@ -57,8 +57,14 @@ export class AuthService {
       newUser.email,
     );
 
+    const userWithToken = {
+      ...newUser,
+      accessToken,
+      refreshToken,
+    };
+
     // 5. Return the user with tokens
-    return { user: newUser, accessToken, refreshToken };
+    return userWithToken;
   }
   async signin(loginUserDto: loginUserDto) {
     const [user] = await this.usersService.find(loginUserDto.email);

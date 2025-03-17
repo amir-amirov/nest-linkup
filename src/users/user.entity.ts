@@ -26,6 +26,15 @@ export class User {
   @Column({ nullable: true })
   image?: string;
 
+  @Column({ nullable: true })
+  phoneNumber?: string;
+
+  @Column({ nullable: true })
+  location?: string;
+
+  @Column({ nullable: true })
+  bio?: string;
+
   @CreateDateColumn()
   created_at: Date; // Auto-generated creation timestamp
 
