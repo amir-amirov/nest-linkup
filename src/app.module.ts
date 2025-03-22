@@ -10,6 +10,10 @@ import { PostsModule } from './posts/posts.module';
 import { Post } from './posts/post.entity';
 import { LikesModule } from './likes/likes.module';
 import { Like } from './likes/like.entity';
+import { CommentsModule } from './comments/comments.module';
+import { Comment } from './comments/comment.entity';
+import { NotificationsModule } from './notifications/notifications.module';
+import { Notification } from './notifications/notification.entity';
 
 @Module({
   imports: [
@@ -25,7 +29,7 @@ import { Like } from './likes/like.entity';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      entities: [User, Post, Like],
+      entities: [User, Post, Like, Comment, Notification],
       synchronize: true,
     }),
     UsersModule,
@@ -36,6 +40,8 @@ import { Like } from './likes/like.entity';
     }),
     PostsModule,
     LikesModule,
+    CommentsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

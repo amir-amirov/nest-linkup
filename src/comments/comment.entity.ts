@@ -12,29 +12,25 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Like {
+export class Comment {
   @PrimaryGeneratedColumn()
   id: number; // Auto-generated id
 
   @Column()
-  postId: number;
-
-  @Column()
-  userId: number;
+  text: string;
 
   @CreateDateColumn()
   created_at: Date; // Auto-generated creation timestamp
 
-  //   @OneToMany(() => Booking, (booking) => booking.slot, { cascade: true })
-  //   bookings: Booking[];
-
-  @ManyToOne(() => Post, (post) => post.likes, {
+  @ManyToOne(() => Post, (post) => post.comments, {
+    eager: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   post: Post;
 
-  @ManyToOne(() => User, (user) => user.likes, {
+  @ManyToOne(() => User, (user) => user.comments, {
+    eager: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
@@ -42,14 +38,14 @@ export class Like {
 
   @AfterInsert()
   logInsert() {
-    console.log('Inserted Like with id', this.id);
+    console.log('Inserted Comment with id', this.id);
   }
   @AfterRemove()
   logRemove() {
-    console.log('Removed Like with id', this.id);
+    console.log('Removed Comment with id', this.id);
   }
   @AfterUpdate()
   logUpdate() {
-    console.log('Updated Like with id', this.id);
+    console.log('Updated Comment with id', this.id);
   }
 }

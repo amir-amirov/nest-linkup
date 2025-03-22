@@ -22,14 +22,13 @@ export class PostsService {
   }
 
   async getPaginatedPosts(paginationDto: PaginationDto, user_id: number) {
-    console.log('User ID:', user_id);
     const { page, limit } = paginationDto;
 
     const [posts, total] = await this.repo.findAndCount({
       relations: ['user', 'likes'], // Load user and likes
       take: limit,
       skip: (page - 1) * limit,
-      order: { created_at: 'ASC' },
+      order: { created_at: 'DESC' },
     });
 
     const postsWithLikedByMe = posts.map((post) => ({
