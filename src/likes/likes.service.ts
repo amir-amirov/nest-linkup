@@ -8,6 +8,7 @@ import { Like } from './like.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { PostsService } from 'src/posts/posts.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class LikesService {
@@ -15,6 +16,7 @@ export class LikesService {
     @InjectRepository(Like) private repo: Repository<Like>,
     private usersService: UsersService,
     private postsService: PostsService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async create(post_id: number, user_id: number) {
@@ -37,7 +39,18 @@ export class LikesService {
       const like = this.repo.create();
       like.post = post;
       like.user = user;
-      return this.repo.save(like);
+      const savedLiked = await this.repo.save(like);
+
+      if (savedLiked) {
+        await this.notificationsService.create({
+          senderId: user_id,
+          receiverId: post.user.id,
+          postId: post_id,
+          type: 'like',
+        });
+      }
+
+      return savedLiked;
     }
   }
 

@@ -1,5 +1,7 @@
+import { Comment } from 'src/comments/comment.entity';
 import { Like } from 'src/likes/like.entity';
 import { Post } from 'src/posts/post.entity';
+import { Notification } from 'src/notifications/notification.entity';
 import {
   AfterInsert,
   AfterRemove,
@@ -49,6 +51,18 @@ export class User {
     onUpdate: 'CASCADE',
   })
   likes: Like[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  comments: Comment[];
+
+  @OneToMany(() => Notification, (notification) => notification.sender)
+  sentNotifications: Notification[];
+
+  @OneToMany(() => Notification, (notification) => notification.receiver)
+  receivedNotifications: Notification[];
 
   @CreateDateColumn()
   created_at: Date; // Auto-generated creation timestamp

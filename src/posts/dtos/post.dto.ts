@@ -15,6 +15,18 @@ export class PostDto {
   @Expose()
   user_id: number;
 
+  @Transform(({ obj }) => obj.user.name)
+  @Expose()
+  user_name: string;
+
+  @Transform(({ obj }) => obj.user.image)
+  @Expose()
+  user_image: string;
+
+  // @Transform(({ obj }) => obj.user.id)
+  // @Expose()
+  // user_id: number;
+
   //   @Transform(({ obj }) => obj.likes)
   //   @Expose()
   //   likesCount: number;

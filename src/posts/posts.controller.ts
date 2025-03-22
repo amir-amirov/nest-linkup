@@ -37,9 +37,15 @@ export class PostsController {
   }
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Get('/all')
   getAllPost(@Request() request: any) {
     return this.postsService.getAll();
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/:id')
+  getOnePost(@Param('id') id: string, @Request() request: any) {
+    return this.postsService.findOne(Number(id));
   }
 
   @Serialize(PostDto)

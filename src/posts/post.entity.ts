@@ -1,5 +1,6 @@
-import { Like } from 'src/likes/like.entity';
 import { User } from 'src/users/user.entity';
+import { Like } from 'src/likes/like.entity';
+import { Comment } from 'src/comments/comment.entity';
 import {
   AfterInsert,
   AfterRemove,
@@ -46,6 +47,12 @@ export class Post {
     onUpdate: 'CASCADE',
   })
   likes: Like[];
+
+  @OneToMany(() => Comment, (comment) => comment.post, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  comments: Comment[];
 
   @AfterInsert()
   logInsert() {
