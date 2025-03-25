@@ -49,7 +49,8 @@ export class CommentsController {
     @Body() body: createCommentDto,
     @Request() request: any,
   ) {
-    return this.commentsService.create(Number(post_id), body, request.user.id);
+    console.log('User: ', request.user.email);
+    return this.commentsService.create(Number(post_id), body, request.user.sub);
   }
 
   @Serialize(CommentDto)
@@ -59,6 +60,6 @@ export class CommentsController {
     @Param('comment_id') comment_id: string,
     @Request() request: any,
   ) {
-    return this.commentsService.delete(Number(comment_id), request.user.id);
+    return this.commentsService.delete(Number(comment_id), request.user.sub);
   }
 }

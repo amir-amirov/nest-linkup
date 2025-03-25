@@ -13,6 +13,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
+import { Notification } from 'src/notifications/notification.entity';
 
 @Entity()
 export class Post {
@@ -53,6 +54,13 @@ export class Post {
     onUpdate: 'CASCADE',
   })
   comments: Comment[];
+
+  @OneToMany(() => Notification, (notification) => notification.post, {
+    // eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  notifications: Notification[];
 
   @AfterInsert()
   logInsert() {

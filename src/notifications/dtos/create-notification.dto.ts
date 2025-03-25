@@ -1,4 +1,5 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { Post } from 'src/posts/post.entity';
 
 export class CreateNotificationDto {
   @IsNumber()
@@ -10,6 +11,10 @@ export class CreateNotificationDto {
   @IsString()
   type: 'comment' | 'like';
 
+  @IsObject()
+  post: Post;
+
   @IsNumber()
-  postId: number;
+  @IsOptional()
+  commentId: number | undefined;
 }

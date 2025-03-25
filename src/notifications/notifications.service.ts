@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateNotificationDto } from './dtos/create-notification.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './notification.entity';
@@ -49,7 +45,7 @@ export class NotificationsService {
           id: createNotificationDto.senderId,
         },
         type: createNotificationDto.type,
-        postId: createNotificationDto.postId,
+        post: { id: createNotificationDto.post.id },
       },
     });
 

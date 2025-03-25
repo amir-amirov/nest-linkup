@@ -10,6 +10,7 @@ import { UsersService } from 'src/users/users.service';
 import { PostsService } from 'src/posts/posts.service';
 import { createCommentDto } from './dtos/create-comment.dto';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { FirebaseService } from 'src/notifications/firebase.service';
 
 @Injectable()
 export class CommentsService {
@@ -18,6 +19,7 @@ export class CommentsService {
     private usersService: UsersService,
     private postsService: PostsService,
     private notificationsService: NotificationsService,
+    private firebaseService: FirebaseService,
   ) {}
 
   async create(
@@ -30,6 +32,8 @@ export class CommentsService {
     if (!user) {
       throw new NotFoundException(`User with id ${user_id} doesn't exist!`);
     }
+
+    console.log('User from DB: ', user);
     const post = await this.postsService.findOne(post_id);
 
     if (!post) {
@@ -39,18 +43,25 @@ export class CommentsService {
     const comment = this.repo.create(createCommentDto);
     comment.post = post;
     comment.user = user;
-    const savedPost = await this.repo.save(comment);
+    const savedComment = await this.repo.save(comment);
 
-    if (savedPost) {
+    if (savedComment) {
       await this.notificationsService.create({
-        senderId: user_id,
+        senderId: user.id,
         receiverId: post.user.id,
-        postId: post_id,
+        post: post,
         type: 'comment',
+        commentId: savedComment.id,
       });
     }
 
-    return savedPost;
+    this.firebaseService.sendPushNotification(
+      post.user.device_token,
+      'New comment!',
+      `${user.name} has commented your post`,
+    );
+
+    return savedComment;
   }
 
   async delete(comment_id: number, user_id: number) {

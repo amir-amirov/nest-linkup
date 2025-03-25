@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { PostsService } from 'src/posts/posts.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { FirebaseService } from 'src/notifications/firebase.service';
 
 @Injectable()
 export class LikesService {
@@ -17,6 +18,7 @@ export class LikesService {
     private usersService: UsersService,
     private postsService: PostsService,
     private notificationsService: NotificationsService,
+    private firebaseService: FirebaseService,
   ) {}
 
   async create(post_id: number, user_id: number) {
@@ -45,10 +47,17 @@ export class LikesService {
         await this.notificationsService.create({
           senderId: user_id,
           receiverId: post.user.id,
-          postId: post_id,
+          post: post,
           type: 'like',
+          commentId: undefined,
         });
       }
+
+      this.firebaseService.sendPushNotification(
+        post.user.device_token,
+        'New like!',
+        `${user.name} has liked your post`,
+      );
 
       return savedLiked;
     }
