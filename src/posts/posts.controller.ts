@@ -31,9 +31,21 @@ export class PostsController {
     @Request() request: any,
   ) {
     return this.postsService.getPaginatedPosts(paginationDto, request.user.sub);
-    // console.log(
-    //   await this.postsService.getPaginatedPosts(paginationDto, request.user.id),
-    // );
+  }
+
+  @Serialize(PostsDto)
+  @UseGuards(AuthGuard)
+  @Get('/:id')
+  async getPaginatedPostsByUserId(
+    @Param('id') user_id: string,
+    @Query() paginationDto: PaginationDto,
+    @Request() request: any,
+  ) {
+    return this.postsService.getPaginatedPostsByUserId(
+      Number(user_id),
+      paginationDto,
+      request.user.sub,
+    );
   }
 
   @UseGuards(AuthGuard)

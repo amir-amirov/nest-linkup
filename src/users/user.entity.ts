@@ -40,6 +40,9 @@ export class User {
   @Column({ nullable: true })
   bio?: string;
 
+  @Column({ nullable: true })
+  device_token?: string;
+
   @OneToMany(() => Post, (post) => post.user, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

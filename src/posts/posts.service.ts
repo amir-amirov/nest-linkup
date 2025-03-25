@@ -47,6 +47,37 @@ export class PostsService {
     };
   }
 
+  async getPaginatedPostsByUserId(
+    targetUserId: number,
+    paginationDto: PaginationDto,
+    requesterUserId: number,
+  ) {
+    const { page, limit } = paginationDto;
+
+    const [posts, total] = await this.repo.findAndCount({
+      relations: ['user', 'likes'], // Load user and likes
+      take: limit,
+      skip: (page - 1) * limit,
+      order: { created_at: 'DESC' },
+      where: { user: { id: targetUserId } },
+    });
+
+    const postsWithLikedByMe = posts.map((post) => ({
+      ...post,
+      name: post.user.name,
+      likesCount: post.likes.length,
+      likedByMe: post.likes.some((like) => like.userId === requesterUserId),
+    }));
+
+    return {
+      data: postsWithLikedByMe,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   async create(createPostDto: createPostDto, id: number) {
     const user = await this.usersService.findOne(id);
     if (!user) {
@@ -109,6 +140,9 @@ export class PostsService {
   }
 
   findOne(id: number) {
-    return this.repo.findOneBy({ id });
+    return this.repo.findOne({
+      where: { id },
+      relations: ['comments'],
+    });
   }
 }

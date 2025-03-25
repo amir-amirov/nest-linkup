@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createUserDto } from './dtos/create-user.dto';
+import { setTokenDto } from './dtos/set-token.dto';
 
 @Injectable()
 export class UsersService {
@@ -40,5 +41,17 @@ export class UsersService {
     } else {
       return this.repo.remove(user);
     }
+  }
+
+  async setFcmToken(setTokenDto: setTokenDto, user_id: number) {
+    const user = await this.findOne(user_id);
+
+    if (!user) {
+      throw new NotFoundException(`User with id ${user_id}`);
+    }
+
+    user.device_token = setTokenDto.device_token;
+
+    return this.repo.save(user);
   }
 }
