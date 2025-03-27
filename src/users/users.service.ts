@@ -11,6 +11,7 @@ export class UsersService {
 
   create(createUserDto: createUserDto) {
     const user = this.repo.create(createUserDto);
+    user.image = 'gs://auth-2c46a.appspot.com/defaultUser.png';
     return this.repo.save(user);
   }
 
